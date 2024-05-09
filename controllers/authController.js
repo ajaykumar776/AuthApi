@@ -1,7 +1,7 @@
 // In controllers/authController.js
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { pool } = require("../app");
+const { pool } = require("../database/config");
 
 const registerUser = async (req, res) => {
   try {
@@ -66,14 +66,14 @@ const loginUser = async (req, res) => {
   
       // Create a JWT token
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-  
-      res.status(200).json({ user, token });
+
+      res.status(200).json({ token });
     } catch (error) {
       console.error("Error logging in:", error);
       res.status(500).json({ error: "Internal server error." });
     }
   };
-  
+
   module.exports = {
     registerUser,
     loginUser,
