@@ -7,7 +7,7 @@ app.use(express.json());
 
 // Basic route to test server
 app.get("/", (req, res) => {
-  res.send("Welcome to the Authentication API!");
+  res.send("Welcome to the Authentication API! With database");
 });
 
 // Import route modules
