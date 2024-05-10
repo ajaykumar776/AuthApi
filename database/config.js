@@ -2,15 +2,18 @@ const { Pool } = require("pg");
 
 
 const pool = new Pool({
-  user: process.env.DB_USER, // PostgreSQL username
-  host: process.env.DB_HOST, // PostgreSQL host
-  database: process.env.DB_NAME, // Your PostgreSQL database name
-  password: process.env.DB_PASSWORD, // PostgreSQL password
-  port: process.env.DB_PORT, // Default PostgreSQL port
-  max: parseInt(process.env.DB_MAX, 10), // Maximum number of connections in the pool
-  idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10), // Connection idle timeout in milliseconds
-  connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT, 10), // Connection timeout in milliseconds
-});
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  ssl: {
+    rejectUnauthorized: false, // Allows self-signed certificates
+  },
+  max: parseInt(process.env.DB_MAX, 10),
+  idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10),
+  connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT, 10),
+})
 
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS users (

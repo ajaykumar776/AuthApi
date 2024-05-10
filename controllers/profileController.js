@@ -1,7 +1,6 @@
 // In controllers/profileController.js
 const { pool } = require("../database/config");
 const { isURL } = require("validator"); // Import a library to validate URLs
-const { use } = require("../routes/auth");
 
 const getProfile = async (req, res) => {
   try {
