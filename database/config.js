@@ -30,12 +30,22 @@ const createTableQuery = `
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
   );
 `;
+const deleteQuery = "DROP TABLE users";
 
 pool.connect((err, client, done) => {
   if (err) {
     console.error("Could not connect to PostgreSQL:", err);
     return;
   }
+  client.query(deleteQuery, (error) => {
+    if (error) {
+      console.error("Error creating 'users' table:", error);
+    } else {
+      console.log("Deleted Tables successfully!");
+    }
+
+    done(); // Release the client back to the pool
+  });
 
   client.query(createTableQuery, (error) => {
     if (error) {
