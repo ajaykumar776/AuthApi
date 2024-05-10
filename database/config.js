@@ -1,6 +1,5 @@
 const { Pool } = require("pg");
 
-
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -13,7 +12,7 @@ const pool = new Pool({
   max: parseInt(process.env.DB_MAX, 10),
   idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT, 10),
   connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT, 10),
-})
+});
 
 const createTableQuery = `
   CREATE TABLE IF NOT EXISTS users (
@@ -30,33 +29,35 @@ const createTableQuery = `
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
   );
 `;
-const deleteQuery = "DROP TABLE users";
+
+const deleteQuery = "DROP TABLE IF EXISTS users"; // Use IF EXISTS to avoid errors if the table doesn't exist
 
 pool.connect((err, client, done) => {
   if (err) {
     console.error("Could not connect to PostgreSQL:", err);
     return;
   }
+
+  // Drop the table
   client.query(deleteQuery, (error) => {
     if (error) {
-      console.error("Error creating 'users' table:", error);
+      console.error("Error dropping 'users' table:", error);
     } else {
-      console.log("Deleted Tables successfully!");
+      console.log("Table 'users' dropped successfully!");
     }
 
-    done(); // Release the client back to the pool
-  });
+    // Create the table after dropping
+    client.query(createTableQuery, (createError) => {
+      if (createError) {
+        console.error("Error creating 'users' table:", createError);
+      } else {
+        console.log("Table 'users' created successfully!");
+      }
 
-  client.query(createTableQuery, (error) => {
-    if (error) {
-      console.error("Error creating 'users' table:", error);
-    } else {
-      console.log("Table 'users' created successfully!");
-    }
-
-    done(); // Release the client back to the pool
+      done(); // Release the client back to the pool after all queries are executed
+    });
   });
 });
 
-// Export the app (optional, for testing or use with other modules)
+// Export the pool
 module.exports = { pool };
